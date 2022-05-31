@@ -3,23 +3,55 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import fetchBlocks from "./apis/fetchBlocks";
+// import fetchBlocks from "./apis/fetchBlocks";
 
-function App() {
-  React.useEffect(() => {
-    let isMounted = true;
-    fetchBlocks().then(response => {
-      if (!isMounted) {
-        return;
+import graphql from 'babel-plugin-relay/macro';
+import {
+  RelayEnvironmentProvider,
+  loadQuery,
+  usePreloadedQuery,
+} from 'react-relay/hooks';
+import RelayEnvironment from './RelayEnvironment';
+
+const { Suspense } = React;
+
+// Define a query
+const RepositoryNameQuery = graphql`
+  query AppRepositoryNameQuery {
+    blocks {
+      edges {
+        node {
+          id
+          previous  
+        }
       }
+    }
+  }
+`;
 
-      console.log(response);
-    });
+const preloadedQuery = loadQuery(RelayEnvironment, RepositoryNameQuery, {
+  /* query variables */
+  first: 20,
+});
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+function App(props) {
+  const data = usePreloadedQuery(RepositoryNameQuery, props.preloadedQuery);
+  console.log("data", data);
+
+  // React.useEffect(() => {
+  //   let isMounted = true;
+  //   fetchBlocks().then(response => {
+  //     if (!isMounted) {
+  //       return;
+  //     }
+
+  //     console.log(response);
+  //   });
+
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, []);
 
   return (
     <div className="App">
@@ -41,4 +73,14 @@ function App() {
   );
 }
 
-export default App;
+function AppRoot(props) {
+  return (
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <Suspense fallback={'Loading...'}>
+        <App preloadedQuery={preloadedQuery} />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  );
+}
+
+export default AppRoot;
