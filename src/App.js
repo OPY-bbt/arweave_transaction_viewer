@@ -9,11 +9,14 @@ import {
   loadQuery,
   usePreloadedQuery,
   useLazyLoadQuery,
+  useQueryLoader,
 } from "react-relay/hooks";
+import { fetchQuery } from "react-relay";
 import RelayEnvironment from "./RelayEnvironment";
 import { currentBlockQuery } from "./index";
 
 import "./App.css";
+import usePaginationFragment from "react-relay/lib/relay-hooks/usePaginationFragment";
 
 const { Suspense } = React;
 
@@ -26,10 +29,16 @@ export const transactionsQuery = graphql`
       block: { min: 0, max: $maxBlock }
       tags: [{ name: "Content-Type", values: ["image/png"] }]
     ) {
+      pageInfo {
+        hasNextPage
+      },
       edges {
         cursor
         node {
           id
+          block {
+            timestamp
+          }
           tags {
             name
             value
@@ -68,7 +77,7 @@ function App(props) {
       <p>Total Block Height: {maxBlock}</p>
       {txsPreloadedQuery ? (
         <Suspense fallback={<p>Loading Transactions...</p>}>
-          <Txs preloadedQuery={txsPreloadedQuery} />
+          <Txs preloadedQuery={txsPreloadedQuery} maxBlock={maxBlock} />
         </Suspense>
       ) : null}
     </>
@@ -76,21 +85,51 @@ function App(props) {
 }
 
 const Txs = (props) => {
-  const data = usePreloadedQuery(
+  const initialData = usePreloadedQuery(
     transactionsQuery,
     props.preloadedQuery
   );
+  const [dataGroup, setDataGroup] = useState([initialData]);
+  const [loading, setLoading] = useState(false);
+
+  const handleLoadNext = () => {
+    const edges = dataGroup[dataGroup.length - 1].transactions.edges;
+    fetchQuery(RelayEnvironment, transactionsQuery, {
+        maxBlock: props.maxBlock,
+        cursor: edges[edges.length - 1].cursor,
+    }).subscribe({
+      start: () => {
+        setLoading(true);
+      },
+      complete: (...args) => {
+        console.log("complete", args);
+        setLoading(false);
+      },
+      next: (value) => {
+        console.log("next", value);
+        setDataGroup([...dataGroup, value])
+      }
+    });
+  };
 
   return (
     <>
-      <ImageList variant="masonry" cols={3} gap={8} style={{ marginTop: "8px" }}>
-        {data.transactions.edges.map((item) => (
-          <TxImg key={item.node.id} data={item} />
-        ))}
-      </ImageList>
-      <div style={{ textAlign: "center", marginBottom: "8px" }}>
-        <Button variant="contained">Load more</Button>
-      </div>
+      {
+        dataGroup.map((data, index) => (
+          <ImageList key={index} variant="masonry" cols={3} gap={8} style={{ marginTop: "8px" }}>
+            {data.transactions.edges.map((item) => (
+              <TxImg key={item.node.id} data={item} />
+            ))}
+          </ImageList>
+        ))
+      }
+      {
+        dataGroup[dataGroup.length - 1].transactions.pageInfo.hasNextPage && (
+          <div style={{ textAlign: "center", marginBottom: "8px" }}>
+            { loading ? "Loading... " : <Button variant="contained" onClick={handleLoadNext}>Load more</Button> }
+          </div>
+        )
+      }
     </>
   )
 };
@@ -112,7 +151,7 @@ const TxImg = (props) => {
       <img src={src} alt="" width="100%" loading="lazy" />
       <ImageListItemBar
         title={props.data.node.id}
-        // subtitle={item.author}
+        subtitle={new Date(props.data.node.block.timestamp * 1000).toLocaleString()}
       />
     </ImageListItem>
   );
