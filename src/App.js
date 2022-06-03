@@ -16,7 +16,6 @@ import RelayEnvironment from "./RelayEnvironment";
 import { currentBlockQuery } from "./index";
 
 import "./App.css";
-import usePaginationFragment from "react-relay/lib/relay-hooks/usePaginationFragment";
 
 const { Suspense } = React;
 
