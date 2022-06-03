@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<733be04cdca12db57c5764b229168331>>
+ * @generated SignedSource<<18ba87652e5a6787a83bc0c63595d8cd>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -90,7 +90,8 @@ v2 = [
       {
         "name": "Content-Type",
         "values": [
-          "image/png"
+          "image/png",
+          "image/jpeg"
         ]
       }
     ]
@@ -312,17 +313,17 @@ return {
     ]
   },
   "params": {
-    "cacheID": "fbf883679ae6c4d68898ce3c2585a3e8",
+    "cacheID": "8e832651eaf75e026b669390f2fb2003",
     "id": null,
     "metadata": {},
     "name": "AppTransactionsQuery",
     "operationKind": "query",
-    "text": "query AppTransactionsQuery(\n  $maxBlock: Int!\n  $cursor: String\n) {\n  transactions(first: 20, after: $cursor, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\"]}]) {\n    pageInfo {\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        block {\n          timestamp\n          id\n        }\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AppTransactionsQuery(\n  $maxBlock: Int!\n  $cursor: String\n) {\n  transactions(first: 20, after: $cursor, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\", \"image/jpeg\"]}]) {\n    pageInfo {\n      hasNextPage\n    }\n    edges {\n      cursor\n      node {\n        id\n        block {\n          timestamp\n          id\n        }\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "15840eb39de6e219ffa3eb1d7d4a5138";
+(node/*: any*/).hash = "58be6241567a16ac6081c65ef8313ffb";
 
 module.exports = ((node/*: any*/)/*: Query<
   AppTransactionsQuery$variables,

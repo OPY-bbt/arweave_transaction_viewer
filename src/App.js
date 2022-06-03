@@ -26,7 +26,7 @@ export const transactionsQuery = graphql`
       first: 20,
       after: $cursor,
       block: { min: 0, max: $maxBlock }
-      tags: [{ name: "Content-Type", values: ["image/png"] }]
+      tags: [{ name: "Content-Type", values: ["image/png", "image/jpeg"] }]
     ) {
       pageInfo {
         hasNextPage
