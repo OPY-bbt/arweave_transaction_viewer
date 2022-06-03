@@ -116,7 +116,7 @@ const Txs = (props) => {
     <>
       {
         dataGroup.map((data, index) => (
-          <ImageList key={index} variant="masonry" cols={3} gap={8} style={{ marginTop: "8px" }}>
+          <ImageList key={index} variant="masonry" cols={2} gap={8} style={{ marginTop: "8px" }}>
             {data.transactions.edges.map((item) => (
               <TxImg key={item.node.id} data={item} />
             ))}
@@ -147,7 +147,7 @@ const TxImg = (props) => {
   }, [props.data.node.id]);
 
   return (
-    <ImageListItem>
+    <ImageListItem style={{ display: "block", overflow: "hidden" }}>
       <img src={src} alt="" width="100%" loading="lazy" />
       <ImageListItemBar
         title={props.data.node.id}
