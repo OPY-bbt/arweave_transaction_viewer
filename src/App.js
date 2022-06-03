@@ -10,14 +10,15 @@ import {
   usePreloadedQuery,
 } from "react-relay/hooks";
 import RelayEnvironment from "./RelayEnvironment";
+import { currentBlockQuery } from "./index";
 
 import "./App.css";
 
 const { Suspense } = React;
 
 // Define a query
-export const RepositoryNameQuery = graphql`
-  query AppRepositoryNameQuery($maxBlock: Int!) {
+export const transactionsQuery = graphql`
+  query AppTransactionsQuery($maxBlock: Int!) {
     transactions(
       first: 20,
       block: { min: 0, max: $maxBlock }
@@ -41,34 +42,40 @@ export const RepositoryNameQuery = graphql`
 `;
 
 function App(props) {
-  const data = usePreloadedQuery(RepositoryNameQuery, props.preloadedQuery);
-  // const data = useLazyLoadQuery(graphql`
-  //   query AppRepositoryNameQuery($first: Int) {
-  //     blocks(first: $first) {
-  //       edges {
-  //         node {
-  //           id
-  //           previous
-  //         }
-  //       }
-  //     }
-  //   }
-  // `, { first: first });
+  const currentBlockInfo = usePreloadedQuery(
+    currentBlockQuery,
+    props.preloadedQuery
+  );
+  const {
+    block: { height: maxBlock },
+  } = currentBlockInfo;
+  const [txsPreloadedQuery, setTxsPreloadedQuery] = useState(null);
 
-  // React.useEffect(() => {
-  //   let isMounted = true;
-  //   fetchBlocks().then(response => {
-  //     if (!isMounted) {
-  //       return;
-  //     }
+  // TODO: loadQuery in useEffect
+  useEffect(() => {
+    const preloadedQuery = loadQuery(RelayEnvironment, transactionsQuery, {
+      maxBlock,
+    });
+    setTxsPreloadedQuery(preloadedQuery);
+  }, [maxBlock]);
 
-  //     console.log(response);
-  //   });
+  return (
+    <>
+      <p>Total Block Height: {maxBlock}</p>
+      {txsPreloadedQuery ? (
+        <Suspense fallback={<p>Loading Transactions...</p>}>
+          <Txs preloadedQuery={txsPreloadedQuery} />
+        </Suspense>
+      ) : null}
+    </>
+  );
+}
 
-  //   return () => {
-  //     isMounted = false;
-  //   };
-  // }, []);
+const Txs = (props) => {
+  const data = usePreloadedQuery(
+    transactionsQuery,
+    props.preloadedQuery
+  );
 
   return (
     <>
@@ -81,8 +88,8 @@ function App(props) {
         <Button variant="contained">Load more</Button>
       </div>
     </>
-  );
-}
+  )
+};
 
 const TxImg = (props) => {
   const [src, setSrc] = useState(null);
@@ -93,21 +100,7 @@ const TxImg = (props) => {
       .then(blob => {
         const imageUrl = window.URL.createObjectURL(blob);
         setSrc(imageUrl);
-      })
-    // arweave.transactions
-    //   .getData(props.data.node.id, {
-    //     decode: true,
-    //     string: false,
-    //   })
-    //   .then((data) => {
-    //     const blob = new Blob([data], { type: "image/png" });
-    //     const imageUrl = window.URL.createObjectURL(blob);
-    //     setSrc(imageUrl);
-    //   })
-    //   .catch((e) => {
-    //     console.log("get data error", props.data.node.id);
-    //     setSrc(false);
-    //   });
+      });
   }, [props.data.node.id]);
 
   return (
@@ -124,7 +117,7 @@ const TxImg = (props) => {
 function AppRoot(props) {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <Suspense fallback={"Loading..."}>
+      <Suspense fallback={"Loading Current Block..."}>
         <App preloadedQuery={props.preloadedQuery} />
       </Suspense>
     </RelayEnvironmentProvider>

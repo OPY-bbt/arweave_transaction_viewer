@@ -1,31 +1,33 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { StyledEngineProvider } from '@mui/material/styles';
+import graphql from 'babel-plugin-relay/macro';
+
 import './index.css';
-import App, { RepositoryNameQuery } from './App';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {
-  RelayEnvironmentProvider,
-  loadQuery,
-  usePreloadedQuery,
-} from "react-relay/hooks";
+import { loadQuery } from "react-relay/hooks";
 import RelayEnvironment from "./RelayEnvironment";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-fetch('https://arweave.net/info')
-  .then(response => response.json())
-  .then(data => {
-    const preloadedQuery = loadQuery(RelayEnvironment, RepositoryNameQuery, { maxBlock: data.height });
+export const currentBlockQuery = graphql`
+  query srcCurrentBlockQuery {
+    block {
+      height
+    }
+  }
+`;
 
-    root.render(
-      <React.StrictMode>
-        <StyledEngineProvider injectFirst>
-          <App arweaveInfo={data} preloadedQuery={preloadedQuery}/>
-        </StyledEngineProvider>
-      </React.StrictMode>
-    );
-  })
+const preloadedQuery = loadQuery(RelayEnvironment, currentBlockQuery);
+
+root.render(
+  <React.StrictMode>
+    <StyledEngineProvider injectFirst>
+      <App preloadedQuery={preloadedQuery}/>
+    </StyledEngineProvider>
+  </React.StrictMode>
+);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

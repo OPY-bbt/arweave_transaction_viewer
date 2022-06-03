@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8cf7a812ea1a03bf6c6f1bfba3c0dded>>
+ * @generated SignedSource<<866cc23018049b61cb8e27562ac860cf>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -11,10 +11,10 @@
 
 /*::
 import type { ConcreteRequest, Query } from 'relay-runtime';
-export type AppRepositoryNameQuery$variables = {|
+export type AppTransactionsQuery$variables = {|
   maxBlock: number,
 |};
-export type AppRepositoryNameQuery$data = {|
+export type AppTransactionsQuery$data = {|
   +transactions: {|
     +edges: $ReadOnlyArray<{|
       +node: {|
@@ -31,9 +31,9 @@ export type AppRepositoryNameQuery$data = {|
     |}>,
   |},
 |};
-export type AppRepositoryNameQuery = {|
-  variables: AppRepositoryNameQuery$variables,
-  response: AppRepositoryNameQuery$data,
+export type AppTransactionsQuery = {|
+  variables: AppTransactionsQuery$variables,
+  response: AppTransactionsQuery$data,
 |};
 */
 
@@ -176,7 +176,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "AppRepositoryNameQuery",
+    "name": "AppTransactionsQuery",
     "selections": (v1/*: any*/),
     "type": "Query",
     "abstractKey": null
@@ -185,23 +185,23 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "AppRepositoryNameQuery",
+    "name": "AppTransactionsQuery",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "111910c72c98cc7325a07e1659103dc9",
+    "cacheID": "41b619f649426412adbcf4aec5d7bd53",
     "id": null,
     "metadata": {},
-    "name": "AppRepositoryNameQuery",
+    "name": "AppTransactionsQuery",
     "operationKind": "query",
-    "text": "query AppRepositoryNameQuery(\n  $maxBlock: Int!\n) {\n  transactions(first: 20, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\"]}]) {\n    edges {\n      node {\n        id\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AppTransactionsQuery(\n  $maxBlock: Int!\n) {\n  transactions(first: 20, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\"]}]) {\n    edges {\n      node {\n        id\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "74bf73805c5d3151d291daf1e79de68f";
+(node/*: any*/).hash = "90d43ad1a9af2354e3d37aacceb9e44d";
 
 module.exports = ((node/*: any*/)/*: Query<
-  AppRepositoryNameQuery$variables,
-  AppRepositoryNameQuery$data,
+  AppTransactionsQuery$variables,
+  AppTransactionsQuery$data,
 >*/);
