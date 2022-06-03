@@ -20,9 +20,12 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "yarn run relay && react-scripts build",
-    "relay": "yarn run relay-compiler $@ --watch",
+    "relay": "yarn run relay-compiler $@",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "docker:build": "docker build -t arweave_viewer .",
+    "docker:run": "docker run -d -p 3100:80 arweave_viewer",
+    "docker:export": "docker save -o arweave_viewer.tar arweave_viewer"
   },
   "relay": {
     "src": "./src/",
