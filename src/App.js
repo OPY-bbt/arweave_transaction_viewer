@@ -8,6 +8,7 @@ import {
   RelayEnvironmentProvider,
   loadQuery,
   usePreloadedQuery,
+  useLazyLoadQuery,
 } from "react-relay/hooks";
 import RelayEnvironment from "./RelayEnvironment";
 import { currentBlockQuery } from "./index";
@@ -18,13 +19,15 @@ const { Suspense } = React;
 
 // Define a query
 export const transactionsQuery = graphql`
-  query AppTransactionsQuery($maxBlock: Int!) {
+  query AppTransactionsQuery($maxBlock: Int!, $cursor: String) {
     transactions(
       first: 20,
+      after: $cursor,
       block: { min: 0, max: $maxBlock }
       tags: [{ name: "Content-Type", values: ["image/png"] }]
     ) {
       edges {
+        cursor
         node {
           id
           tags {
@@ -55,6 +58,7 @@ function App(props) {
   useEffect(() => {
     const preloadedQuery = loadQuery(RelayEnvironment, transactionsQuery, {
       maxBlock,
+      // cursor: "WyIyMDIyLTA2LTAzVDA0OjU3OjUzLjEzMVoiLDIwXQ",
     });
     setTxsPreloadedQuery(preloadedQuery);
   }, [maxBlock]);

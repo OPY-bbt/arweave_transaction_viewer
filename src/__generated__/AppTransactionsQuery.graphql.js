@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<866cc23018049b61cb8e27562ac860cf>>
+ * @generated SignedSource<<2b539f2c3558b8f0cb9e07a0337571e5>>
  * @flow
  * @lightSyntaxTransform
  * @nogrep
@@ -13,10 +13,12 @@
 import type { ConcreteRequest, Query } from 'relay-runtime';
 export type AppTransactionsQuery$variables = {|
   maxBlock: number,
+  cursor?: ?string,
 |};
 export type AppTransactionsQuery$data = {|
   +transactions: {|
     +edges: $ReadOnlyArray<{|
+      +cursor: string,
       +node: {|
         +id: string,
         +tags: $ReadOnlyArray<{|
@@ -38,17 +40,25 @@ export type AppTransactionsQuery = {|
 */
 
 var node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "maxBlock"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "cursor"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "maxBlock"
+},
+v2 = [
   {
     "alias": null,
     "args": [
+      {
+        "kind": "Variable",
+        "name": "after",
+        "variableName": "cursor"
+      },
       {
         "fields": [
           {
@@ -96,6 +106,13 @@ v1 = [
         "name": "edges",
         "plural": true,
         "selections": [
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "cursor",
+            "storageKey": null
+          },
           {
             "alias": null,
             "args": null,
@@ -173,33 +190,39 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "AppTransactionsQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v2/*: any*/),
     "type": "Query",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "AppTransactionsQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v2/*: any*/)
   },
   "params": {
-    "cacheID": "41b619f649426412adbcf4aec5d7bd53",
+    "cacheID": "82df70659401719abb8858cb9402b972",
     "id": null,
     "metadata": {},
     "name": "AppTransactionsQuery",
     "operationKind": "query",
-    "text": "query AppTransactionsQuery(\n  $maxBlock: Int!\n) {\n  transactions(first: 20, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\"]}]) {\n    edges {\n      node {\n        id\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
+    "text": "query AppTransactionsQuery(\n  $maxBlock: Int!\n  $cursor: String\n) {\n  transactions(first: 20, after: $cursor, block: {min: 0, max: $maxBlock}, tags: [{name: \"Content-Type\", values: [\"image/png\"]}]) {\n    edges {\n      cursor\n      node {\n        id\n        tags {\n          name\n          value\n        }\n        data {\n          type\n          size\n        }\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "90d43ad1a9af2354e3d37aacceb9e44d";
+(node/*: any*/).hash = "b09d880e9280aac66b9f4094c6e4e593";
 
 module.exports = ((node/*: any*/)/*: Query<
   AppTransactionsQuery$variables,
