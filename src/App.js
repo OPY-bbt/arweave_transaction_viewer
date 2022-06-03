@@ -146,7 +146,7 @@ const TxImg = (props) => {
   }, [props.data.node.id]);
 
   return (
-    <ImageListItem style={{ display: "block", overflow: "hidden" }}>
+    <ImageListItem style={{ display: "block", overflow: "hidden", minHeight: "60px" }}>
       <img src={src} alt="" width="100%" loading="lazy" />
       <ImageListItemBar
         title={props.data.node.id}
